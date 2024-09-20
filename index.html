@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+</head>
+
+<body>
+    <canvas id="canvas" width="640" height="480" style="border:1px solid #000;">
+        Your browser does not support the canvas element.
+    </canvas>
+
+    <script type="text/javascript" src="Octopus.js"></script>
+    <script type="text/javascript" src="Net.js"></script>
+    <script type="text/javascript" src="KilledMessage.js"></script>
+
+    <script type="text/javascript">
+        $(window).bind("load", function () {
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+
+            var backgroundImage = new Image();
+            backgroundImage.src = './bg-ocean.gif';
+
+            var octopus = [
+                new Octopus(context, 300, 300, 0.4),
+                new Octopus(context, 100, 100, 0.5, 18),
+                new Octopus(context, 570, 70, 0.6)
+            ];
+            var showMessage = false;
+            var net = new Net(context,octopus,showMessage);
+            var msg = new Message(context);
+
+            var isNetFree = true;
+            var capturedOctopus = null;
+            var keysPressed = {};
+            
+            document.addEventListener('keydown', function (event) {
+                keysPressed[event.key] = true;
+            });
+
+            document.addEventListener('keyup', function (event) {
+                delete keysPressed[event.key];
+            });
+            var maxFps = 60; 
+
+            var lastFrameTimeMs = 0; 
+            var delta = 0;
+            requestAnimationFrame(mainLoop);
+            var timestep = 1000 / 60;
+            function mainLoop(timestamp) {
+                if (timestamp < lastFrameTimeMs + 1000 / maxFps) {
+                    requestAnimationFrame(mainLoop);
+                    return;
+                  }
+                  delta += timestamp - lastFrameTimeMs; 
+                  lastFrameTimeMs = timestamp;
+                processInput();
+                while (delta >= timestep) {
+                    update(timestep); 
+                    delta -= timestep;
+                  }
+
+                draw();
+                requestAnimationFrame(mainLoop);
+            }
+
+            function processInput() {
+                net.keysPressed = keysPressed;
+            }
+
+            function update(timestep) {
+
+                octopus = octopus.filter(oct => !oct.isKilled);  
+                octopus.forEach(function (c) { c.update(timestep); });
+                net.update(timestep);
+            }
+
+            function draw() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+                context.save();
+                octopus.forEach(function (c) { c.draw(); });
+                net.draw();
+
+                if (net.showMessage) {
+                    console.log("yes")
+                    msg.draw();
+                    
+                }
+
+                context.restore();
+            }
+        });
+    </script>
+</body>
+
+</html>
