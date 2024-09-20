@@ -14,7 +14,7 @@ Use the arrow keys on your keyboard to control the net:
 
 ### Gameplay Mechanics
 - **Catching Octopuses**: The net has a random chance of catching an octopus when it moves over one.
-- **Ink Squirt**: When an octopus is caught, it squirts ink in various sizes, adding complexity to the game.
+- **Ink Squirt**: When an octopus is caught, it squirts ink in various sizes.
 
 ### Objectives
 - **Removing Octopuses**: Capture an octopus by moving it off the top of the screen, simulating pulling it ashore.
